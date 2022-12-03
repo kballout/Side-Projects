@@ -1,39 +1,22 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import Sidebar from './Sidebar';
 
 function App() {
 
-  const [listOfPlayers, setListOfPlayers] = useState(["john", "jack", "snake"])
-  const [newPlayer, setNewPlayer] = useState()
-
+  function generateBracket(gameName, listOfPlayers){
+    //start the matches
+    return true
+  }
 
   return (
-    <div className='py-10 px-10'>
-      <div className='flex flex-col text-4xl font-bold items-center mt-10'>
-        <h1>Configure Tournament Settings</h1>
-      </div>
-      <div className='mt-10'>
-        <h2 className=' font-bold text-2xl'>Number of players</h2>
-        <div className='bg-blue-400 h-full w-6/12 text-black'>
-          <div className='flex w-full justify-between'>
-            <h3>Total:{listOfPlayers.length}</h3>
-            <div>
-              <h3>Add New Player</h3>
-              <div>
-                <input onChange={(value) => setNewPlayer(value.target.value)} className='bg-white ' type="text" value={newPlayer} />
-                <button onClick={() => setListOfPlayers([...listOfPlayers, newPlayer])}>Add</button>
-              </div>
-            </div>
-          </div>
-          <div>
-            {listOfPlayers.map((name, index) => {
-              return(
-                <h4 key={index}>{index + 1}: {name}</h4>
-              )
-            })}
-          </div>
+    <div className='flex flex-col'>
+      <h1 className='text-4xl font-bold mt-10 text-center'>Tournament Maker</h1>
+        <div className=' absolute top-20 flex items-start float-left'>
+          <Sidebar generateBracket={generateBracket}/>
         </div>
-      </div>
+        <h2 className=' mt-5 self-center'>Bracket</h2>
     </div>
+     
   )
 }
 
