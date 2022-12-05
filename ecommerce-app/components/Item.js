@@ -4,7 +4,7 @@ import React from 'react'
 
 export default function Item({product}) {
   return (
-    <div className='card'>
+    <div className='card dark:text-white border-2 dark:border-white'>
         <Link href={`product/${product.slug}`}>
             <img
                 src={product.image}
@@ -18,7 +18,7 @@ export default function Item({product}) {
             </Link>
             <p className='mb-2'>{product.brand}</p>
             <p>${product.price}</p>
-            <button className='cartButton' type='button'>Add to cart</button>
+            {/* <button className='cartButton' type='button'>Add to cart</button> */}
         </div>
     </div>
   )

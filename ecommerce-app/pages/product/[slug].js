@@ -13,10 +13,10 @@ export default function ProductDetails() {
   }
   return (
     <Layout title={product.name}>
-      <div className="py-2">
+      <div className="py-2 dark:text-white">
         <div onClick={() => Router.back()}>back to products</div>
       </div>
-      <div className="grid md:grid-cols-4 md:gap-3">
+      <div className="grid md:grid-cols-4 md:gap-3 dark:text-white">
         <div className="md:col-span-2">
           <Image
             src={product.image}
