@@ -17,12 +17,12 @@ export default function ProductDetails() {
         <div onClick={() => Router.back()}>back to products</div>
       </div>
       <div className="grid md:grid-cols-4 md:gap-3 dark:text-white">
-        <div className="md:col-span-2">
+        <div className="mb-10 md:col-span-2" style={{width: '400', height: '400'}}>
           <Image
             src={product.image}
             alt={product.name}
-            width={500}
-            height={500}
+            width={400}
+            height={400}
           />
         </div>
         <div>

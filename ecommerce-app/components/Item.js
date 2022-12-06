@@ -18,7 +18,6 @@ export default function Item({product}) {
             </Link>
             <p className='mb-2'>{product.brand}</p>
             <p>${product.price}</p>
-            {/* <button className='cartButton' type='button'>Add to cart</button> */}
         </div>
     </div>
   )
