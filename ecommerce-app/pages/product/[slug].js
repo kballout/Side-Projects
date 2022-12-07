@@ -1,16 +1,34 @@
 import Image from "next/image";
 import Router, { useRouter } from "next/router";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../components/Layout";
+import { editCart } from "../../utils/mainReducer";
 import data from "../../utils/testdata";
 
 export default function ProductDetails() {
+  const {cart} = useSelector((state) => state.main)
+  const dispatch = useDispatch()
+  const router = useRouter()
   const { query } = useRouter();
   const { slug } = query;
   const product = data.products.find((pr) => pr.slug === slug);
+  
   if (!product) {
     return <div>Product not found!</div>;
   }
+
+  const addToCart = () => {
+    const exists = cart.cartItems.find((item) => item.slug === product.slug);
+    const quantity = exists ? exists.quantity + 1: 1
+    if(product.stock < quantity){
+      alert('The product is out of stock')
+      return
+    }
+    dispatch(editCart({type: 'ADD_TO_CART', payload: {...product, quantity}}))
+    router.push('/cart')
+  }
+
   return (
     <Layout title={product.name}>
       <div className="py-2 dark:text-white">
@@ -48,7 +66,7 @@ export default function ProductDetails() {
               <div>Status</div>
               <div>{product.stock > 0 ? "In Stock" : "Unavailable"}</div>
             </div>
-            <button className="cartButton w-full">Add to cart</button>
+            <button onClick={() => addToCart()} className="cartButton w-full">Add to cart</button>
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from "react-redux"
 import { toggleDarkMode } from "../utils/mainReducer";
 
 export default function Layout({ children, title }) {
-  const {darkMode} = useSelector((state) => state.main)
+  const {darkMode, cart} = useSelector((state) => state.main)
   const dispatch = useDispatch()
 
   return (
@@ -24,7 +24,13 @@ export default function Layout({ children, title }) {
                 </Link>
                 <div className="flex gap-5 p-2 text-lg">
                     <BsMoonStarsFill size={30} onClick={() => dispatch(toggleDarkMode())}/>
-                    <Link href="/cart">Cart</Link>
+                    <Link href="/cart">Cart
+                      {cart.cartItems.length > 0 && (
+                        <span className="ml-1 rounded-full bg-red-600 px-2 py-1 text-xs font-bold text-white">
+                          {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
+                        </span>
+                      )}
+                    </Link>
                     <Link href="/login">Login</Link>
                 </div>
             </nav>
