@@ -1,3 +1,4 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -6,26 +7,36 @@ import Layout from "../components/Layout";
 import { BsXCircle } from "react-icons/bs";
 import { editCart } from "../utils/mainReducer";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
-export default function CartScreen() {
+function CartScreen() {
   const { cart } = useSelector((state) => state.main);
   const dispatch = useDispatch();
-  const router = useRouter()
+  const router = useRouter();
 
   const removeCartItem = (item) => {
     dispatch(editCart({ type: "REMOVE_FROM_CART", payload: item }));
   };
 
+  const updateCart = (item, value) => {
+    const quantity = Number(value);
+    dispatch(editCart({ type: "ADD_TO_CART", payload: { ...item, quantity } }));
+  };
+
   return (
     <Layout title={"shopping Cart"}>
-      <h1 className="mb-4 text-xl">Shopping Cart</h1>
+      <h1 className="mb-4 text-2xl dark:text-white">Shopping Cart</h1>
       {cart.cartItems.length === 0 ? (
-        <div>
-          Cart is empty.
-          <Link href={"/"}>Shop</Link>
+        <div className="dark:text-white">
+          <div>
+            Cart is empty
+          </div>
+          <div className="mt-5">
+            <Link href={"/"}>Go Shopping</Link>
+          </div>
         </div>
       ) : (
-        <div className="grid md:grid-cols-4 md:gap-5">
+        <div className="grid md:grid-cols-4 md:gap-5  dark:text-white">
           <div className="overflow-x-auto md:col-span-3">
             <table className="min-w-full">
               <thead className="border-b">
@@ -52,7 +63,19 @@ export default function CartScreen() {
                         {item.name}
                       </a>
                     </td>
-                    <td className="p-5 text-right">{item.quantity}</td>
+                    <td className="p-5 text-right">
+                      <select
+                        className="bg-white w-10 dark:text-black"
+                        value={item.quantity}
+                        onChange={(e) => updateCart(item, e.target.value)}
+                      >
+                        {[...Array(item.stock).keys()].map((num) => (
+                          <option key={num + 1} value={num + 1}>
+                            {num + 1}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
                     <td className="p-5 text-right">${item.price}</td>
                     <td className="p-5 text-center">
                       <button onClick={() => removeCartItem(item)}>
@@ -69,8 +92,7 @@ export default function CartScreen() {
               <li>
                 <div className="pb-3 text-xl">
                   Subtotal (
-                  {cart.cartItems.reduce((a, item) => a + item.quantity, 0)}):
-                  $
+                  {cart.cartItems.reduce((a, item) => a + item.quantity, 0)}): $
                   {cart.cartItems.reduce(
                     (a, item) => a + item.quantity * item.price,
                     0
@@ -78,7 +100,12 @@ export default function CartScreen() {
                 </div>
               </li>
               <li>
-                <button onClick={() => router.push('/shipping')} className="w-full cartButton">Check Out</button>
+                <button
+                  onClick={() => router.push("/shipping")}
+                  className="w-full cartButton"
+                >
+                  Check Out
+                </button>
               </li>
             </ul>
           </div>
@@ -87,3 +114,6 @@ export default function CartScreen() {
     </Layout>
   );
 }
+
+
+export default dynamic(() => Promise.resolve(CartScreen), {ssr: false})

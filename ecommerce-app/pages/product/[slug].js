@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../components/Layout";
@@ -31,11 +31,8 @@ export default function ProductDetails() {
 
   return (
     <Layout title={product.name}>
-      <div className="py-2 dark:text-white">
-        <div onClick={() => Router.back()}>back to products</div>
-      </div>
       <div className="grid md:grid-cols-4 md:gap-3 dark:text-white">
-        <div className="mb-10 md:col-span-2" style={{width: '400', height: '400'}}>
+        <div className="mb-10 md:col-span-2">
           <Image
             src={product.image}
             alt={product.name}
@@ -43,21 +40,31 @@ export default function ProductDetails() {
             height={400}
           />
         </div>
-        <div>
+        <div className="">
           <ul>
             <li>
               <h1 className="text-3xl">{product.name}</h1>
             </li>
-            <li>Category: {product.category}</li>
-            <li>Brand: {product.brand}</li>
+            <hr className="mb-5 mt-2" />
+            <li className="font-bold">Category: 
+             <span className="font-normal ml-5">
+              {product.category}
+             </span> 
+            </li>
+            <li className="font-bold">Brand: 
+            <span className="font-normal ml-5">
+              {product.brand}
+            </span>
+            </li>
             <li>
               {product.rating} of {product.reviews} reviews
             </li>
-            <li>Description: {product.description} </li>
+            <li className="font-bold mt-5">Description</li>
+            <li>{product.description}</li>
           </ul>
         </div>
         <div>
-          <div className="card p-5">
+          <div className="card p-5 dark:border-white dark:border-2">
             <div className="mb-2 flex justify-between">
               <div>Price</div>
               <div>${product.price}</div>

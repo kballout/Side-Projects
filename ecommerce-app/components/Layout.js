@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import {BsMoonStarsFill} from "react-icons/bs"
@@ -8,6 +8,10 @@ import { toggleDarkMode } from "../utils/mainReducer";
 export default function Layout({ children, title }) {
   const {darkMode, cart} = useSelector((state) => state.main)
   const dispatch = useDispatch()
+  const [cartCount, setCartCount] = useState(0)
+  useEffect(() => {
+    setCartCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0))
+  },[])
 
   return (
     <>
@@ -25,7 +29,7 @@ export default function Layout({ children, title }) {
                 <div className="flex gap-5 p-2 text-lg">
                     <BsMoonStarsFill size={30} onClick={() => dispatch(toggleDarkMode())}/>
                     <Link href="/cart">Cart
-                      {cart.cartItems.length > 0 && (
+                      {cartCount > 0 && (
                         <span className="ml-1 rounded-full bg-red-600 px-2 py-1 text-xs font-bold text-white">
                           {cart.cartItems.reduce((a, c) => a + c.quantity, 0)}
                         </span>

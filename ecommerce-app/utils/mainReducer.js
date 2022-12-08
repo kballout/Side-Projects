@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import Cookies from "js-cookie";
 
 const initialState = {
   darkMode: false,
   loggedIn: false,
-  cart: { cartItems: [] },
+  // cart: {cartItems: []}
+  cart: Cookies.get('cart') ? JSON.parse(Cookies.get('cart')) : { cartItems: [] }
 };
 
 export const mainReducer = createSlice({
@@ -23,11 +25,13 @@ export const mainReducer = createSlice({
                 item.name === exists.name ? newItem : item
                 )
             : [...state.cart.cartItems, newItem];
+            Cookies.set('cart', JSON.stringify({...state.cart, cartItems}))
             return {...state, cart: {...state.cart, cartItems}}
         }
         case "REMOVE_FROM_CART": {
-          state.cart.cartItems = state.cart.cartItems.filter((item) => item.slug !== newItem.slug);
-          break;
+          const cartItems = state.cart.cartItems.filter((item) => item.slug !== newItem.slug);
+          Cookies.set('cart', JSON.stringify({...state.cart, cartItems}))
+          return {...state, cart: {...state.cart, cartItems}}
         }
         default:
         return state
