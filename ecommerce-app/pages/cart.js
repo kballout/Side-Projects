@@ -65,7 +65,7 @@ function CartScreen() {
                     </td>
                     <td className="p-5 text-right">
                       <select
-                        className="bg-white w-10 dark:text-black"
+                        className="bg-white w-14 rounded p-2 ring-indigo-300 focus:ring  dark:text-black"
                         value={item.quantity}
                         onChange={(e) => updateCart(item, e.target.value)}
                       >
@@ -101,7 +101,7 @@ function CartScreen() {
               </li>
               <li>
                 <button
-                  onClick={() => router.push("/shipping")}
+                  onClick={() => router.push("login?redirect=/shipping")}
                   className="w-full cartButton"
                 >
                   Check Out
@@ -114,6 +114,5 @@ function CartScreen() {
     </Layout>
   );
 }
-
 
 export default dynamic(() => Promise.resolve(CartScreen), {ssr: false})
