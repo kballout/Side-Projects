@@ -1,7 +1,11 @@
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "../components/Layout";
 import { useForm } from "react-hook-form";
+import {signIn, useSession} from "next-auth/react"
+import { getError } from "../utils/error";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 export default function Login() {
   const {
@@ -10,8 +14,29 @@ export default function Login() {
     formState: { errors },
   } = useForm();
 
-  const submit = ({ email, password }) => {
-    console.log(email, password);
+  const {data: session} = useSession()
+  const router = useRouter()
+  const {redirect} = router.query
+
+  useEffect(() => {
+    if(session?.user){
+      router.push(redirect || '/')
+    }
+  },[router, session, redirect])
+
+  const submit = async ({ email, password }) => {
+    try {
+      const res = await signIn('credentials', {
+        redirect: false,
+        email,
+        password
+      })
+      if(res.error){
+        toast.error(res.error) 
+      }
+    } catch (err) {
+      toast.error(getError(err))
+    }
   };
 
   return (
@@ -47,8 +72,8 @@ export default function Login() {
             {...register("password", {
               required: "You must enter a password",
               minLength: {
-                value: 7,
-                message: 'Password must be 7 characters or longer'
+                value: 6,
+                message: 'Password must be 6 characters or longer'
               }
             })}
             className="w-full dark:text-black"

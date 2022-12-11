@@ -3,8 +3,6 @@ import Cookies from "js-cookie";
 
 const initialState = {
   darkMode: false,
-  loggedIn: false,
-  // cart: {cartItems: []}
   cart: Cookies.get('cart') ? JSON.parse(Cookies.get('cart')) : { cartItems: [] }
 };
 
