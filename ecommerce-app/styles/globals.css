@@ -42,3 +42,7 @@ input,
 textarea {
   @apply bg-white rounded border p-2 outline-none ring-indigo-400 focus:ring
 }
+
+.dropdown-link {
+  @apply flex p-2 hover:bg-gray-200
+}

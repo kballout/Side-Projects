@@ -4,9 +4,11 @@ import Link from "next/link";
 import { BsMoonStarsFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import { toggleDarkMode } from "../utils/mainReducer";
-import { useSession } from "next-auth/react";
+import { editCart, toggleDarkMode } from "../utils/mainReducer";
+import { signOut, useSession } from "next-auth/react";
 import 'react-toastify/dist/ReactToastify.css'
+import { Menu } from "@headlessui/react";
+import Cookies from "js-cookie";
 
 export default function Layout({ children, title }) {
   const { status, data: session } = useSession();
@@ -18,6 +20,14 @@ export default function Layout({ children, title }) {
   useEffect(() => {
     setCartCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
   }, []);
+
+  const logoutHandler = () => {
+    Cookies.remove('cart')
+    dispatch(editCart({type: 'RESET_CART'}))
+    signOut({
+      callbackUrl: '/login'
+    })
+  }
 
   return (
     <>
@@ -53,7 +63,22 @@ export default function Layout({ children, title }) {
               {status === "loading" ? (
                 "loading"
               ) : session?.user ? (
-                session.user.name
+                <Menu as='div' classname='relative inline-block'>
+                  <Menu.Button className='text-blue-800'>
+                    {session.user.name}
+                  </Menu.Button>
+                  <Menu.Items className='absolute right-0 w-56 origin-top-right shadow-lg bg-white' >
+                    <Menu.Item>
+                      <Link className="dropdown-link" href="/profile" >Profile</Link>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <Link className="dropdown-link" href="/order-history" >Order History</Link>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <Link className="dropdown-link" href="#" onClick={logoutHandler} >Logout</Link>
+                    </Menu.Item>
+                  </Menu.Items>
+                </Menu>
               ) : (
                 <Link href="/login">Login</Link>
               )}

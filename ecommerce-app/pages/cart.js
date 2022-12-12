@@ -32,7 +32,7 @@ function CartScreen() {
             Cart is empty
           </div>
           <div className="mt-5">
-            <Link href={"/"}>Go Shopping</Link>
+            <Link className="text-blue-500 hover:text-blue-800" href={"/"}>Go Shopping</Link>
           </div>
         </div>
       ) : (

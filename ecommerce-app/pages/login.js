@@ -85,11 +85,11 @@ export default function Login() {
           )}
         </div>
         <div className="mb-4">
-          <button>Login</button>
+          <button className="text-blue-500 hover:text-blue-800">Login</button>
         </div>
         <div className="mb-4">
           Don&apos;t have an account? &nbsp;
-          <Link href={"/register"}>Register</Link>
+          <Link className="text-blue-500 hover:text-blue-800" href={"/register"}>Register</Link>
         </div>
       </form>
     </Layout>
