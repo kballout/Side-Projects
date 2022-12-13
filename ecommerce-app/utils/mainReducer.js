@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 
 const initialState = {
   darkMode: false,
-  cart: Cookies.get('cart') ? JSON.parse(Cookies.get('cart')) : { cartItems: [] }
+  cart: Cookies.get('cart') ? JSON.parse(Cookies.get('cart')) : { cartItems: [], shippingAddress: {} }
 };
 
 export const mainReducer = createSlice({
@@ -38,6 +38,18 @@ export const mainReducer = createSlice({
               cartItems: [],
               shippingAddress: {location: []},
               paymentMethod: ''
+            }
+          }
+        }
+        case "SAVE_SHIPPING_ADDRESS" : {
+          return{
+            ...state,
+            cart: {
+              ...state.cart,
+              shippingAddress: {
+                ...state.cart.shippingAddress,
+                ...action.payload.payload
+              }
             }
           }
         }
