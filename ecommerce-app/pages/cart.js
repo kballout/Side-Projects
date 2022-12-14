@@ -8,6 +8,8 @@ import { BsXCircle } from "react-icons/bs";
 import { editCart } from "../utils/mainReducer";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function CartScreen() {
   const { cart } = useSelector((state) => state.main);
@@ -18,9 +20,14 @@ function CartScreen() {
     dispatch(editCart({ type: "REMOVE_FROM_CART", payload: item }));
   };
 
-  const updateCart = (item, value) => {
+  const updateCart = async (item, value) => {
     const quantity = Number(value);
+    const {data} = await axios.get(`/api/products/${item._id}`)
+    if(data.stock < quantity) {
+      return toast.error('Sorry, this product is out of stock')
+    }
     dispatch(editCart({ type: "ADD_TO_CART", payload: { ...item, quantity } }));
+    toast.success('Product has been updated in the cart')
   };
 
   return (

@@ -1,29 +1,35 @@
+import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import Layout from "../../components/Layout";
+import Product from "../../models/Product";
 import { editCart } from "../../utils/mainReducer";
-import data from "../../utils/testdata";
+import db from "../../utils/mongo";
 
-export default function ProductDetails() {
+export default function ProductDetails(props) {
+  const {product} = props
   const {cart} = useSelector((state) => state.main)
   const dispatch = useDispatch()
   const router = useRouter()
-  const { query } = useRouter();
-  const { slug } = query;
-  const product = data.products.find((pr) => pr.slug === slug);
   
   if (!product) {
-    return <div>Product not found!</div>;
+    return (
+      <Layout title='Product Not Found'>
+        Product Not Found
+      </Layout>
+    )
   }
 
-  const addToCart = () => {
+  const addToCart = async () => {
     const exists = cart.cartItems.find((item) => item.slug === product.slug);
     const quantity = exists ? exists.quantity + 1: 1
-    if(product.stock < quantity){
-      alert('The product is out of stock')
-      return
+    const {data} = await axios.get(`/api/products/${product._id}`)
+
+    if(data.stock < quantity){
+      return toast.error('Sorry, this product is out of stock')
     }
     dispatch(editCart({type: 'ADD_TO_CART', payload: {...product, quantity}}))
     router.push('/cart')
@@ -79,4 +85,19 @@ export default function ProductDetails() {
       </div>
     </Layout>
   );
+}
+
+
+export async function getServerSideProps(context) {
+  const {params} = context
+  const {slug} = params
+
+  await db.connect()
+  const product = await Product.findOne({slug}).lean()
+  await db.disconnect()
+  return {
+    props: {
+      product: product ? db.convertDocument(product) : null
+    }
+  }
 }
