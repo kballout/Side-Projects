@@ -10,7 +10,7 @@ export default NextAuth({
     },
     callbacks: {
         async jwt({token, user}){
-            if(user?.id) {
+            if(user?._id) {
                 token._id = user._id
             }
             if(user?.isAdmin) {
