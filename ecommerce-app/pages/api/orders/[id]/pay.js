@@ -7,9 +7,6 @@ const handler = async (req, res) => {
   if (!session) {
     return res.status(401).send("login required");
   }
-  console.log('====================================');
-  console.log('PAYMENT START');
-  console.log('====================================');
   await db.connect()
   const order = await Order.findById(req.query.id)
   if(order){

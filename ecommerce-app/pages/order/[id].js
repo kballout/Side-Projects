@@ -17,28 +17,29 @@ function reducer(state, action) {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
     case "PAY_REQUEST":
-      return {...state, loadingPay: true}
+      return { ...state, loadingPay: true };
     case "PAY_SUCCESS":
-      return {...state, loadingPay: false, successPay: true}
+      return { ...state, loadingPay: false, successPay: true };
     case "PAY_FAIL":
-      return {...state, loadingPay: false, errorPay: action.payload}
+      return { ...state, loadingPay: false, errorPay: action.payload };
     case "PAY_RESET":
-      return {...state, loadingPay: false, successPay: false, errorPay: ''}
+      return { ...state, loadingPay: false, successPay: false, errorPay: "" };
     default:
       state;
   }
 }
 
-export default function OrderScreen() {
-  const [{isPending}, paypalDispatch] = usePayPalScriptReducer()
+function OrderScreen() {
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const { query } = useRouter();
   const orderId = query.id;
 
-  const [{ loading, error, order, successPay, loadingPay}, dispatch] = useReducer(reducer, {
-    loading: true,
-    order: {},
-    error: "",
-  });
+  const [{ loading, error, order, successPay, loadingPay }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      order: {},
+      error: "",
+    });
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -53,22 +54,22 @@ export default function OrderScreen() {
 
     if (!order._id || successPay || (order._id && order._id !== orderId)) {
       fetchOrder();
-      if(successPay){
-        dispatch({type: 'PAY_RESET'})
+      if (successPay) {
+        dispatch({ type: "PAY_RESET" });
       }
     } else {
       const loadPaypalScript = async () => {
-        const {data: clientId} = await axios.get('/api/keys/paypal')
+        const { data: clientId } = await axios.get("/api/keys/paypal");
         paypalDispatch({
-          type: 'resetOptions',
+          type: "resetOptions",
           value: {
-            'client-id': clientId,
-            currency: 'USD'
-          }
-        })
-        paypalDispatch({type:'setLoadingStatus', value: 'pending'})
-      }
-      loadPaypalScript()
+            "client-id": clientId,
+            currency: "USD",
+          },
+        });
+        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
+      };
+      loadPaypalScript();
     }
   }, [order, orderId, paypalDispatch, successPay]);
 
@@ -88,36 +89,40 @@ export default function OrderScreen() {
 
   //Paypal functions
   function createOrder(data, actions) {
-    return actions.order.create({
-      purchase_units: [
-        {
-          amount: {value: totalPrice} 
-        },
-      ]
-    }).then((orderID) => {
-      return orderID
-    })
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: { value: totalPrice },
+          },
+        ],
+      })
+      .then((orderID) => {
+        return orderID;
+      });
   }
 
   function onApprove(data, actions) {
-    return actions.order.capture().then(async function(details) {
+    return actions.order.capture().then(async function (details) {
       try {
-        dispatch({type: 'PAY_REQUEST'})
-        const {data} = await axios.put(`/api/orders/${order._id}/pay`, details)
-        dispatch({type: 'PAY_SUCCESS', payload: data})
-        toast.success('Order has been paid successfully')
+        dispatch({ type: "PAY_REQUEST" });
+        const { data } = await axios.put(
+          `/api/orders/${order._id}/pay`,
+          details
+        );
+        dispatch({ type: "PAY_SUCCESS", payload: data });
+        toast.success("Order has been paid successfully");
       } catch (error) {
-        dispatch({type: 'PAY_FAIL', payload: getError(error)})
+        dispatch({ type: "PAY_FAIL", payload: getError(error) });
         console.log(error);
-        toast.error(getError(error))
+        toast.error(getError(error));
       }
-    })
+    });
   }
 
-  function onError(err){
-    toast.error(getError(err))
+  function onError(err) {
+    toast.error(getError(err));
   }
-
 
   return (
     <Layout title={`Order ${orderId}`}>
@@ -127,7 +132,7 @@ export default function OrderScreen() {
       ) : error ? (
         <div className="alert-error">{error}</div>
       ) : (
-        <div className="grid md:grid-cols-4 md:gap-5">
+        <div className="grid md:grid-cols-4 md:gap-5 dark:text-white">
           <div className="overflow-x-auto md:col-span-3">
             <div className="card p-5">
               <h2 className="mb-2 text-lg">Shipping Address</h2>
@@ -241,3 +246,4 @@ export default function OrderScreen() {
 }
 
 OrderScreen.auth = true;
+export default OrderScreen;
